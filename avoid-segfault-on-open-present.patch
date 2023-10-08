@@ -1,0 +1,18 @@
+nemo --existing-window can be extremely useful when spawing a terminal and switching
+to another path, but gdk_x11_get_server_time() will cause a segmentation fault. Okay,
+I don't care whether it's urgent enough. Hyprland will focus it for me.
+
+diff --git a/src/nemo-main-application.c b/src/nemo-main-application.c
+index 3a61cdd..94e34d2 100644
+--- a/src/nemo-main-application.c
++++ b/src/nemo-main-application.c
+@@ -445,8 +445,7 @@ open_tabs_in_existing_window (NemoMainApplication *application,
+ 
+             /* Don't use `gtk_window_present()`, as the window manager will ignore this window's focus request and try
+              * to just mark it urgent instead (flashing in the window list for example). */
+-            gtk_window_present_with_time (GTK_WINDOW (window),
+-                                          gdk_x11_get_server_time (gtk_widget_get_window (GTK_WIDGET (window))));
++            gtk_window_present (GTK_WINDOW (window));
+ 
+           break;
+         }
